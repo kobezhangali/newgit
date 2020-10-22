@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aa.dao.TypesDao">
+
+    <resultMap type="com.aa.entity.Types" id="TypesMap">
+        <result property="tid" column="tid" jdbcType="VARCHAR"/>
+        <result property="tname" column="tname" jdbcType="VARCHAR"/>
+        <result property="tdesc" column="tdesc" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="TypesMap">
+        select
+          tid, tname, tdesc
+        from orders.types
+        where tid = #{tid}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="TypesMap">
+        select
+          tid, tname, tdesc
+        from orders.types
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="TypesMap">
+        select
+        tid, tname, tdesc
+        from orders.types
+        <where>
+            <if test="tid != null and tid != ''">
+                and tid = #{tid}
+            </if>
+            <if test="tname != null and tname != ''">
+                and tname = #{tname}
+            </if>
+            <if test="tdesc != null and tdesc != ''">
+                and tdesc = #{tdesc}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="tid" useGeneratedKeys="true">
+        insert into orders.types(tname, tdesc)
+        values (#{tname}, #{tdesc})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="tid" useGeneratedKeys="true">
+        insert into orders.types(tname, tdesc)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.tname}, #{entity.tdesc})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="tid" useGeneratedKeys="true">
+        insert into orders.types(tname, tdesc)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.tname}, #{entity.tdesc})
+        </foreach>
+        on duplicate key update
+        tname = values(tname) , tdesc = values(tdesc)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update orders.types
+        <set>
+            <if test="tname != null and tname != ''">
+                tname = #{tname},
+            </if>
+            <if test="tdesc != null and tdesc != ''">
+                tdesc = #{tdesc},
+            </if>
+        </set>
+        where tid = #{tid}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from orders.types where tid = #{tid}
+    </delete>
+
+</mapper>
